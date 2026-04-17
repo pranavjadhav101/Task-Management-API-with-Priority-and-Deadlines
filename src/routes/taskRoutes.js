@@ -1,15 +1,30 @@
 const express = require('express');
-const router = express.Router();
-const taskController = require('../controllers/taskController');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+const taskRoutes = require('./routes/taskRoutes');
+const startReminderJob = require('./jobs/reminderJob');
 
-// CRUD Routes
-router.route('/')
-  .post(taskController.createTask)
-  .get(taskController.getTasks);
+dotenv.config();
+connectDB();
 
-router.route('/:id')
-  .get(taskController.getTaskById)
-  .put(taskController.updateTask)
-  .delete(taskController.deleteTask);
+const app = express();
 
-module.exports = router;
+app.use(express.json());
+
+app.use('/api/tasks', taskRoutes);
+
+app.get('/', (req, res) => {
+  res.send("Task API Running");
+});
+
+// start cron job
+startReminderJob();
+
+// important for testing
+if (require.main === module) {
+  app.listen(process.env.PORT || 5000, () =>
+    console.log("Server running")
+  );
+}
+
+module.exports = app;
