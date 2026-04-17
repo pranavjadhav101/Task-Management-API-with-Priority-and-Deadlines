@@ -80,4 +80,4 @@ taskSchema.set('toObject', { virtuals: true });
 
 taskSchema.index({ priority: 1, status: 1, dueDate: 1 });
 
-module.exports = mongoose.model('Task', taskSchema);
+module.exports = mongoose.model('Task', taskSchema); 
